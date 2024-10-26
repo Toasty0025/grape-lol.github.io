@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Clone</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --netflix-red: #e50914;
+            --netflix-black: #141414;
+            --netflix-dark-gray: #181818;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--netflix-black);
+            color: white;
+        }
+
+        header {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+            padding: 1rem 4%;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: var(--netflix-red);
+            font-size: 2rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .search-container {
+            position: relative;
+            margin-left: auto;
+            margin-right: 2rem;
+        }
+
+        #search-bar {
+            background-color: rgba(0,0,0,0.75);
+            border: 1px solid rgba(255,255,255,0.85);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            width: 250px;
+            transition: width 0.3s ease-in-out;
+        }
+
+        #search-bar:focus {
+            outline: none;
+            width: 300px;
+        }
+
+        main {
+            margin-top: 4rem;
+        }
+
+        .hero {
+            height: 60vh;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            padding: 0 4%;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 7.4rem;
+            background: linear-gradient(180deg, transparent, var(--netflix-black));
+        }
+
+        .hero-content {
+            max-width: 600px;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .watch-btn {
+            background-color: var(--netflix-red);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        .watch-btn:hover {
+            background-color: #f40612;
+        }
+
+        .category-section {
+            padding: 2rem 4%;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .movie-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 1rem 0;
+            padding-bottom: 3rem;
+        }
+
+        .movie-card {
+            position: relative;
+            transition: transform 0.3s ease;
+            height: 141px;
+            width: 100%; 
+            margin-bottom: 2rem; 
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.1);
+            z-index: 2;
+        }
+
+        .movie-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--netflix-dark-gray);
+            padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            border-radius: 0 0 4px 4px;
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .movie-card:hover .movie-info {
+            opacity: 1;
+            visibility: visible;
+            max-height: 300px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        @media (max-width: 768px) {
+            .movie-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .movie-card {
+                margin-bottom: 1rem;
+            }
+
+            .movie-card:hover {
+                transform: scale(1.05);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .movie-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .category-section {
+            margin-bottom: 3rem;
+        }
+
+        .hero {
+            height: 60vh;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <a href="#" class="logo" aria-label="Netflix homepage">NETFLIX</a>
+        <div class="search-container">
+            <input type="text" id="search-bar" placeholder="Search titles..." aria-label="Search movies">
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" role="banner">
+            <div class="hero-content">
+                <h1 id="hero-title">Movie Title</h1>
+                <p id="hero-description">Movie description will appear here...</p>
+                <a href="#" class="watch-btn" id="hero-watch-btn">
+                    <i class="fas fa-play"></i> Watch Now
+                </a>
+            </div>
+        </section>
+
+        <section class="category-section">
+            <h2 class="category-title">Trending Now</h2>
+            <div class="movie-row" id="trending-movies" role="list"></div>
+        </section>
+
+        <section class="category-section">
+            <h2 class="category-title">Search Results</h2>
+            <div class="movie-row" id="search-results" role="list"></div>
+        </section>
+    </main>
+
+    <div id="loading-message" style="display: none">Loading...</div>
+    <div id="error-message" class="error-message" style="display: none"></div>
+
+    <script>
+        const apiUrl = "https://zonal-helsa-nebula420-8cf52411.koyeb.app";
+        const trendingMoviesContainer = document.getElementById("trending-movies");
+        const searchResultsContainer = document.getElementById("search-results");
+        const searchBar = document.getElementById("search-bar");
+        const loadingMessage = document.getElementById("loading-message");
+        const errorMessage = document.getElementById("error-message");
+        const heroTitle = document.getElementById("hero-title");
+        const heroDescription = document.getElementById("hero-description");
+        const heroWatchBtn = document.getElementById("hero-watch-btn");
+
+        async function fetchTrendingMovies() {
+            try {
+                loadingMessage.style.display = "block";
+                const response = await fetch(`${apiUrl}/trending?page=1`);
+                const movies = await response.json();
+                loadingMessage.style.display = "none";
+                displayTrendingMovies(movies);
+
+                if (movies.length > 0) {
+                    updateHeroSection(movies[0]);
+                }
+            } catch (error) {
+                handleError(error);
+            }
+        }
+
+        function updateHeroSection(movie) {
+            heroTitle.textContent = movie.title;
+            heroDescription.textContent = movie.description;
+            heroWatchBtn.href = `${apiUrl}${movie.link}`;
+            document.querySelector('.hero').style.backgroundImage =
+                `linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.3)), url(${movie.poster})`;
+        }
+
+        function createMovieCard(movie) {
+            const movieCard = document.createElement("article");
+            movieCard.className = "movie-card";
+            movieCard.setAttribute('role', 'listitem');
+            movieCard.innerHTML = `
+                <img src="${movie.poster || '/api/placeholder/250/141'}" alt="${movie.title}">
+                <div class="movie-info">
+                    <h3>${movie.title} (${movie.year})</h3>
+                    <p>${movie.description}</p>
+                    <a href="${apiUrl}${movie.link}" class="watch-btn">
+                        <i class="fas fa-play"></i> Watch Now
+                    </a>
+                </div>
+            `;
+            return movieCard;
+        }
+
+        function displayTrendingMovies(movies) {
+            trendingMoviesContainer.innerHTML = "";
+            movies.forEach(movie => {
+                trendingMoviesContainer.appendChild(createMovieCard(movie));
+            });
+        }
+
+        function displaySearchResults(movies) {
+            searchResultsContainer.innerHTML = "";
+            document.querySelector('.category-section:last-child').style.display = 
+                movies.length > 0 ? 'block' : 'none';
+            movies.forEach(movie => {
+                searchResultsContainer.appendChild(createMovieCard(movie));
+            });
+        }
+
+        async function searchMovies(query) {
+            try {
+                loadingMessage.style.display = "block";
+                const response = await fetch(`${apiUrl}/search/${query}`);
+                const results = await response.json();
+                loadingMessage.style.display = "none";
+                displaySearchResults(results);
+            } catch (error) {
+                handleError(error);
+            }
+        }
+
+        function handleError(error) {
+            console.error("Error:", error);
+            errorMessage.textContent = "An error occurred. Please try again later.";
+            errorMessage.style.display = "block";
+            loadingMessage.style.display = "none";
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        searchBar.addEventListener("input", debounce((event) => {
+            const query = event.target.value.trim();
+            if (query) {
+                searchMovies(query);
+            } else {
+                displaySearchResults([]);
+            }
+        }, 500));
+
+        fetchTrendingMovies();
+    </script>
+</body>
+</html>
